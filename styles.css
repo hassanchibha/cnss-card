@@ -21,7 +21,7 @@ body {
 
 /* القسم الأيسر الذي يحتوي على الكانفا */
 .left-section {
-  flex: 1.5;
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -40,7 +40,7 @@ body {
 /* تنسيق الفورم */
 .form-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 
 .form-row-single {

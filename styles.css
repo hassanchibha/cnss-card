@@ -40,7 +40,7 @@ body {
 /* تنسيق الفورم */
 .form-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 .form-row-single {

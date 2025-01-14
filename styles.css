@@ -21,7 +21,7 @@ body {
 
 /* القسم الأيسر الذي يحتوي على الكانفا */
 .left-section {
-  flex: 1;
+  flex: 1.5;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -30,7 +30,7 @@ body {
 
 /* القسم الأيمن الذي يحتوي على الفورم */
 .right-section {
-  flex: 1.5;
+  flex: 1;
   padding: 20px;
   background-color: #fff;
   border-radius: 10px;

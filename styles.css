@@ -30,7 +30,7 @@ body {
 
 /* القسم الأيمن الذي يحتوي على الفورم */
 .right-section {
-  flex: 1;
+  flex: 1.5;
   padding: 20px;
   background-color: #fff;
   border-radius: 10px;

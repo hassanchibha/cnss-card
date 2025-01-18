@@ -5,16 +5,8 @@ const canvas = new fabric.Canvas('canvas', {
     backgroundColor: '#ffffff',
 });
 
-const text = new fabric.Text('Hello Fabric!', {
-    left: 50,
-    top: 50,
-    fontSize: 20,
-    fill: 'red',
-});
-canvas.add(text);
-
 // تحميل الصورة إلى الكانفا
-fabric.Image.fromURL('./cnss_card.png', (img) => {
+fabric.Image.fromURL('./cnss_card.bmp', (img) => {
     if (!img) {
         console.error('فشل تحميل الصورة!');
         return;

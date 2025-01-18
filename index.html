@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق إضافة نصوص على الصورة</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-100 flex h-screen">
+    <!-- القسم الأول: فورم الإدخال -->
+    <div class="w-1/3 bg-white p-6 shadow-lg">
+        <h1 class="text-2xl font-bold mb-6">إضافة النصوص</h1>
+        <form id="textForm" class="space-y-4">
+            <!-- حقول الإدخال -->
+            <div>
+                <label for="immatriculation" class="block text-sm font-medium text-gray-700">Immatriculation</label>
+                <input type="text" id="immatriculation" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+            </div>
+            <div>
+                <label for="fullNameAr" class="block text-sm font-medium text-gray-700">الاسم الشخصي و العائلي</label>
+                <input type="text" id="fullNameAr" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+            </div>
+            <div>
+                <label for="fullNameFr" class="block text-sm font-medium text-gray-700">Nom et Prénom</label>
+                <input type="text" id="fullNameFr" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+            </div>
+            <div>
+                <label for="birthDate" class="block text-sm font-medium text-gray-700">تاريخ الازدياد</label>
+                <input type="text" id="birthDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+            </div>
+            <div>
+                <label for="cin" class="block text-sm font-medium text-gray-700">C.I.N</label>
+                <input type="text" id="cin" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+            </div>
+            <div>
+                <label for="idcs" class="block text-sm font-medium text-gray-700">IDCS</label>
+                <input type="text" id="idcs" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+            </div>
+            <div>
+                <label for="fontSize" class="block text-sm font-medium text-gray-700">حجم الخط</label>
+                <select id="fontSize" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                    <option value="8">8</option>
+                    <option value="10">10</option>
+                    <option value="12">12</option>
+                    <option value="14">14</option>
+                    <option value="16">16</option>
+                    <option value="18">18</option>
+                    <option value="20">20</option>
+                    <option value="22">22</option>
+                </select>
+            </div>
+            <div>
+                <label for="fontFamily" class="block text-sm font-medium text-gray-700">نوع الخط</label>
+                <select id="fontFamily" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                    <option value="Arial">Arial</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Verdana">Verdana</option>
+                    <option value="Courier New">Courier New</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="Tahoma">Tahoma</option>
+                    <option value="Impact">Impact</option>
+                    <option value="Comic Sans MS">Comic Sans MS</option>
+                    <option value="Trebuchet MS">Trebuchet MS</option>
+                    <option value="Lucida Sans Unicode">Lucida Sans Unicode</option>
+                </select>
+            </div>
+            <!-- زر إضافة المعلومات -->
+            <button type="button" id="addTextBtn" class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">إضافة المعلومات</button>
+            <!-- زر حفظ الصورة -->
+            <button type="button" id="saveImageBtn" class="w-full bg-green-500 text-white p-2 rounded-md hover:bg-green-600">حفظ الصورة</button>
+        </form>
+    </div>
+
+    <!-- القسم الثاني: الكانفا -->
+    <div class="w-2/3 bg-gray-200 p-6">
+        <canvas id="canvas" width="503" height="320" class="bg-white shadow-lg"></canvas>
+    </div>
+
+    <!-- القسم الثالث: Panel Layers -->
+    <div class="w-1/4 bg-white p-6 shadow-lg">
+        <h2 class="text-xl font-bold mb-4">الطبقات (Layers)</h2>
+        <div id="layersPanel" class="space-y-2">
+            <!-- سيتم إضافة الطبقات هنا ديناميكيًا -->
+        </div>
+    </div>
+
+    <!-- إضافة مكتبة Fabric.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

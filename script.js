@@ -8,7 +8,7 @@ paper.setup(canvas);
 
 // قائمة عناوين الصور
 const images = [
-    'https://i.postimg.cc/3Jh0CGNc/M1.png',
+    	'https://i.postimg.cc/3Jh0CGNc/M1.png',
 	'https://i.postimg.cc/T16108dD/M2.png',
 	'https://i.postimg.cc/6qf31Hq1/M3.png',
 	'https://i.postimg.cc/3xJyzHgj/M4.png',
@@ -16,7 +16,7 @@ const images = [
 	'https://i.postimg.cc/SNG2ZKzN/M6.png',
 	'https://i.postimg.cc/CKRRLHrz/M7.png',
 	'https://i.postimg.cc/yd9W06HK/t1.png',
-	'https://i.postimg.cc/rp7Kd07g/t2.png',
+	'https://i.postimg.cc/rp7Kd07g/t2.png'
 ];
 
 let currentImageIndex = 0; // الفهرس الحالي للصورة

@@ -8,19 +8,15 @@ paper.setup(canvas);
 
 // قائمة عناوين الصور
 const images = [
-    'https://i.postimg.cc/NMb9DXyQ/A1.png',
-    'https://i.postimg.cc/rsmdPpWx/A14.png',
-    'https://i.postimg.cc/Dfj4bqkg/A15.png',
-    'https://i.postimg.cc/1XjghZcT/A16.png',
-    'https://i.postimg.cc/fT138DbS/A17.png',
-    'https://i.postimg.cc/hPXz8fKq/A2.png',
-    'https://i.postimg.cc/FKV7FSV0/MAA4.png',
-    'https://i.postimg.cc/9QTDSK48/MAA4-big-black.png',
-    'https://i.postimg.cc/8CS7V4M1/MAA4-big-blue.png',
-    'https://i.postimg.cc/76Pb5LKd/MAA4-big-blue-wop.png',
-    'https://i.postimg.cc/xCs8MS7C/MAA4-big-blue-wop.png',
-    'https://i.postimg.cc/7hf6NW8N/MAA4-color-Black.png',
-    'https://i.postimg.cc/vTkm2tGw/t1.png'
+    'https://i.postimg.cc/3Jh0CGNc/M1.png'
+	'https://i.postimg.cc/T16108dD/M2.png'
+	'https://i.postimg.cc/6qf31Hq1/M3.png'
+	'https://i.postimg.cc/3xJyzHgj/M4.png'
+	'https://i.postimg.cc/Z579SDcG/M5.png'
+	'https://i.postimg.cc/SNG2ZKzN/M6.png'
+	'https://i.postimg.cc/CKRRLHrz/M7.png'
+	'https://i.postimg.cc/yd9W06HK/t1.png'
+	'https://i.postimg.cc/rp7Kd07g/t2.png'
 ];
 
 let currentImageIndex = 0; // الفهرس الحالي للصورة

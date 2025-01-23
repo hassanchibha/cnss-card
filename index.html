@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق إضافة نصوص إلى الصور</title>
+    <!-- إضافة Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- إضافة FontAwesome للأيقونات -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+        }
+        #form-container {
+            width: 33.33%;
+            background-color: #f8f9fa;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        #canvas-container {
+            width: 66.67%;
+            background-color: #e9ecef;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative; /* لجعل الأسهم تظهر داخل الحاوية */
+        }
+        canvas {
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+        .tooltip-inner {
+            font-size: 12px;
+        }
+        .btn-new-card {
+            background-color: #ffc107; /* لون برتقالي/أصفر */
+            border: none;
+            color: #000;
+        }
+        .hidden-content {
+            display: none; /* إخفاء المحتوى */
+        }
+        /* نافذة التعديل المخصصة */
+        #editModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        /* أسهم التنقل */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 100;
+        }
+        .nav-arrow.left {
+            left: 10px;
+        }
+        .nav-arrow.right {
+            right: 10px;
+        }
+        /* طبقة Overlay لمنع التفاعل مع الكانفاس */
+        #canvas-overlay {
+            display: none; /* مخفية بشكل افتراضي */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.1); /* لون شفاف */
+            z-index: 50; /* فوق الكانفاس ولكن تحت نافذة التعديل */
+			pointer-events: none; /* منع التفاعل مع الطبقة */
+        }
+    </style>
+</head>
+<body>
+    <div id="form-container">
+        <div id="form-content">
+            <h2 class="alert alert-success">إضـافـة بـطـاقـة جـديـدة</h2>
+            <input type="text" id="immatriculation" class="form-control mb-2" placeholder="Immatriculation" pattern="[0-9]*" title="يجب أن يحتوي على أرقام فقط (0-9)">
+            <input type="text" id="fullNameAr" class="form-control mb-2" placeholder="الاسم الشخصي و العائلي" pattern="[\u0600-\u06FF\s]+" title="يجب أن يحتوي على أحرف عربية فقط">
+            <input type="text" id="fullNameFr" class="form-control mb-2" placeholder="Nom et Prénom" pattern="[A-Za-z\s]+" title="يجب أن يحتوي على أحرف لاتينية فقط">
+            <input type="date" id="birthDate" class="form-control mb-2" placeholder="تاريخ الازدياد">
+            <input type="text" id="cin" class="form-control mb-2" placeholder="C.I.N">
+            <input type="text" id="idcs" class="form-control mb-2" placeholder="IDCS" pattern="[0-9\-_]*" title="يجب أن يحتوي على أرقام أو الرموز - أو _">
+            <select id="fontFamily" class="form-control mb-2" onchange="changeInputFonts()">
+                <option value="Arial">Arial</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Comic Sans MS">Comic Sans MS</option>
+                <option value="Impact">Impact</option>
+                <option value="Lucida Console">Lucida Console</option>
+                <option value="Tahoma">Tahoma</option>
+                <option value="Trebuchet MS">Trebuchet MS</option>
+                <option value="Palatino">Palatino</option>
+                <option value="Garamond">Garamond</option>
+            </select>
+            <button onclick="addText()" class="btn btn-primary w-100 mb-2">إضافة المعلومات</button>
+        </div>
+        <div class="fixed-buttons">
+            <button onclick="saveImage()" class="btn btn-success w-100">حفظ الصورة</button>
+        </div>
+    </div>
+
+    <div id="canvas-container">
+        <!-- زر السهم الأيسر -->
+        <button class="nav-arrow left" onclick="changeImage(-1)">&#10094;</button>
+        <!-- زر السهم الأيمن -->
+        <button class="nav-arrow right" onclick="changeImage(1)">&#10095;</button>
+        <canvas id="canvas" resize></canvas>
+        <!-- طبقة Overlay لمنع التفاعل مع الكانفاس -->
+        <div id="canvas-overlay"></div>
+    </div>
+
+    <!-- نافذة التعديل المخصصة -->
+    <div id="editModal">
+        <h3>تعديل النص</h3>
+        <input type="text" id="editTextContent" class="form-control mb-2" placeholder="النص">
+        <input type="number" id="editTextSize" class="form-control mb-2" placeholder="حجم الخط">
+        <select id="editTextFont" class="form-control mb-2">
+            <option value="Arial">Arial</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Comic Sans MS">Comic Sans MS</option>
+            <option value="Impact">Impact</option>
+            <option value="Lucida Console">Lucida Console</option>
+            <option value="Tahoma">Tahoma</option>
+            <option value="Trebuchet MS">Trebuchet MS</option>
+            <option value="Palatino">Palatino</option>
+            <option value="Garamond">Garamond</option>
+        </select>
+        <!-- حقل اختيار لون النص -->
+        <input type="color" id="editTextColor" class="form-control mb-2" placeholder="لون النص">
+        <button onclick="saveTextChanges()" class="btn btn-primary w-100">حفظ</button>
+        <button onclick="closeEditModal()" class="btn btn-secondary w-100 mt-2">إلغاء</button>
+    </div>
+
+    <!-- إضافة Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- إضافة Paper.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.15/paper-full.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

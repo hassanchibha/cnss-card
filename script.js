@@ -5,7 +5,6 @@ canvas.height = 446;
 
 // تحميل مكتبة Paper.js
 paper.setup(canvas);
-console.log('تم تحميل مكتبة Paper.js بنجاح:', paper);
 
 // قائمة عناوين الصور
 const images = [
@@ -116,7 +115,6 @@ function openEditModal(textItem) {
     // إظهار طبقة Overlay
     document.getElementById('canvas-overlay').style.display = 'block';
     selectedText = textItem; // تعيين النص المحدد
-    console.log('تم تحديد النص:', selectedText); // تحقق من أن النص محدد
 }
 
 // إغلاق نافذة التعديل
@@ -124,13 +122,11 @@ function closeEditModal() {
     editModal.style.display = 'none';
     // إخفاء طبقة Overlay
     document.getElementById('canvas-overlay').style.display = 'none';
-    console.log('تم إغلاق النافذة وإلغاء تحديد النص.'); // تحقق من إغلاق النافذة
 }
 
 // حفظ التغييرات
 function saveTextChanges() {
     if (selectedText) {
-        console.log('تم النقر على حفظ. النص المحدد:', selectedText); // تحقق من أن النص محدد
         // تطبيق التغييرات
         selectedText.content = document.getElementById('editTextContent').value;
         selectedText.fontSize = parseInt(document.getElementById('editTextSize').value);
@@ -256,7 +252,6 @@ paper.view.onMouseDown = (event) => {
 function zoomInText() {
     if (selectedText) {
         selectedText.fontSize += 1; // زيادة حجم الخط بمقدار 1
-        console.log('تم التكبير. حجم الخط الجديد:', selectedText.fontSize); // تحقق من التكبير
     }
 }
 
@@ -264,13 +259,11 @@ function zoomInText() {
 function zoomOutText() {
     if (selectedText && selectedText.fontSize > 1) {
         selectedText.fontSize -= 1; // تقليل حجم الخط بمقدار 1
-        console.log('تم التصغير. حجم الخط الجديد:', selectedText.fontSize); // تحقق من التصغير
     }
 }
 
 // استماع لأحداث عجلة الماوس (Mouse Wheel)
 document.addEventListener('wheel', (event) => {
-    console.log('تم تحريك العجلة:', event.deltaY); // تحقق من أن الحدث يعمل
     if (selectedText) {
         event.preventDefault(); // منع السلوك الافتراضي (التكبير/التصغير في الصفحة)
         if (event.deltaY < 0) {
@@ -291,7 +284,6 @@ document.addEventListener('keydown', (event) => {
             selectedText.remove(); // إزالة النص من الكانفاس
             texts.splice(index, 1); // إزالة النص من القائمة
             selectedText = null; // إعادة تعيين النص المحدد
-            console.log('تم حذف النص المحدد.');
         }
     }
 });

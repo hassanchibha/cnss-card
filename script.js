@@ -1,53 +1,43 @@
-// تهيئة Paper.js مع أبعاد الكانفا 503x320
+// تهيئة Paper.js مع أبعاد الكانفاس
 const canvas = document.getElementById('canvas');
 canvas.width = 700;
 canvas.height = 446;
-
-// تحميل مكتبة Paper.js
 paper.setup(canvas);
 
 // قائمة عناوين الصور
 const images = [
-    	'https://i.postimg.cc/3Jh0CGNc/M1.png',
-	'https://i.postimg.cc/T16108dD/M2.png',
-	'https://i.postimg.cc/6qf31Hq1/M3.png',
-	'https://i.postimg.cc/3xJyzHgj/M4.png',
-	'https://i.postimg.cc/Z579SDcG/M5.png',
-	'https://i.postimg.cc/SNG2ZKzN/M6.png',
-	'https://i.postimg.cc/CKRRLHrz/M7.png',
-	'https://i.postimg.cc/yd9W06HK/t1.png',
-	'https://i.postimg.cc/rp7Kd07g/t2.png'
+    'https://i.postimg.cc/3Jh0CGNc/M1.png',
+    'https://i.postimg.cc/T16108dD/M2.png',
+    'https://i.postimg.cc/6qf31Hq1/M3.png',
+    'https://i.postimg.cc/3xJyzHgj/M4.png',
+    'https://i.postimg.cc/Z579SDcG/M5.png',
+    'https://i.postimg.cc/SNG2ZKzN/M6.png',
+    'https://i.postimg.cc/CKRRLHrz/M7.png',
+    'https://i.postimg.cc/yd9W06HK/t1.png',
+    'https://i.postimg.cc/rp7Kd07g/t2.png'
 ];
 
-let currentImageIndex = 0; // الفهرس الحالي للصورة
-let raster = null; // الصورة الحالية في الكانفاس
+let currentImageIndex = 0;
+let raster = null;
+let selectedText = null;
+const texts = [];
 
 // تحميل الصورة الأولى عند بدء التطبيق
 loadImage(images[currentImageIndex]);
 
-// دالة لتحميل الصورة
 function loadImage(imageUrl) {
     const image = new Image();
     image.crossOrigin = 'anonymous';
     image.src = imageUrl;
     image.onload = () => {
-        if (raster) {
-            raster.remove(); // إزالة الصورة القديمة إذا كانت موجودة
-        }
+        if (raster) raster.remove();
         raster = new paper.Raster(image);
         raster.position = paper.view.center;
-        raster.scale(Math.min(
-            canvas.width / raster.bounds.width,
-            canvas.height / raster.bounds.height
-        ));
-        console.log('تم تحميل الصورة بنجاح:', raster);
-
-        // إعادة رسم النصوص بعد تحميل الصورة الجديدة
+        raster.scale(Math.min(canvas.width / raster.bounds.width, canvas.height / raster.bounds.height));
         redrawTexts();
     };
 }
 
-// دالة لإعادة رسم النصوص
 function redrawTexts() {
     texts.forEach(text => {
         const textItem = new paper.PointText({
@@ -55,107 +45,78 @@ function redrawTexts() {
             fillColor: text.fillColor,
             fontFamily: text.fontFamily,
             fontSize: text.fontSize,
-            point: text.point, // استخدام الإحداثيات المحفوظة
+            point: text.point,
         });
 
-        // تمكين السحب والإفلات
         textItem.onMouseDrag = (event) => {
             textItem.position = textItem.position.add(event.delta);
         };
 
-        // تحديد النص عند دخول الماوس إليه
-        textItem.onMouseEnter = () => {
-            if (selectedText) {
-                selectedText.strokeColor = null; // إزالة حدود التحديد السابق
-            }
+        // تحديد النص عند النقر بالماوس
+        textItem.onMouseDown = () => {
+            if (selectedText) selectedText.strokeColor = null; // إزالة تحديد النص السابق
             selectedText = textItem;
-            textItem.strokeColor = 'blue'; // إضافة حدود زرقاء للنص المحدد
-            textItem.strokeWidth = 2; // تحديد عرض الحدود
+            textItem.strokeColor = 'red'; // تغيير لون النص المحدد إلى الأحمر
+            textItem.strokeWidth = 2;
         };
 
         // تعديل النص عند النقر المزدوج
         textItem.onDoubleClick = () => {
-            openEditModal(textItem); // فتح نافذة التعديل
-            selectedText = textItem; // تعيين النص المحدد
+            openEditModal(textItem);
+            selectedText = textItem;
         };
     });
 }
 
-// دالة لتغيير الصورة
 function changeImage(direction) {
     currentImageIndex += direction;
-    if (currentImageIndex < 0) {
-        currentImageIndex = images.length - 1; // الانتقال إلى آخر صورة إذا كان الفهرس أقل من 0
-    } else if (currentImageIndex >= images.length) {
-        currentImageIndex = 0; // الانتقال إلى أول صورة إذا كان الفهرس أكبر من طول المصفوفة
-    }
-    loadImage(images[currentImageIndex]); // تحميل الصورة الجديدة
+    if (currentImageIndex < 0) currentImageIndex = images.length - 1;
+    else if (currentImageIndex >= images.length) currentImageIndex = 0;
+    loadImage(images[currentImageIndex]);
 }
 
-let selectedText = null; // النص المحدد حاليًا
-const texts = []; // قائمة النصوص
-
-// نافذة التعديل المخصصة
 const editModal = document.getElementById('editModal');
 
-// فتح نافذة التعديل
 function openEditModal(textItem) {
-    // تعبئة الحقول بالقيم الحالية
     document.getElementById('editTextContent').value = textItem.content;
     document.getElementById('editTextSize').value = textItem.fontSize;
     document.getElementById('editTextFont').value = textItem.fontFamily;
-    document.getElementById('editTextColor').value = textItem.fillColor.toCSS(true); // تعيين لون النص الحالي
-
-    // إظهار النافذة
+    document.getElementById('editTextColor').value = textItem.fillColor.toCSS(true);
     editModal.style.display = 'block';
-    // إظهار طبقة Overlay
     document.getElementById('canvas-overlay').style.display = 'block';
-    selectedText = textItem; // تعيين النص المحدد
+    selectedText = textItem;
 }
 
-// إغلاق نافذة التعديل
 function closeEditModal() {
     editModal.style.display = 'none';
-    // إخفاء طبقة Overlay
     document.getElementById('canvas-overlay').style.display = 'none';
 }
 
-// حفظ التغييرات
 function saveTextChanges() {
     if (selectedText) {
-        // تطبيق التغييرات
-        selectedText.content = document.getElementById('editTextContent').value;
+        selectedText.content = document.getElementById('editTextContent').value.toUpperCase();
         selectedText.fontSize = parseInt(document.getElementById('editTextSize').value);
         selectedText.fontFamily = document.getElementById('editTextFont').value;
-        selectedText.fillColor = document.getElementById('editTextColor').value; // تطبيق لون النص الجديد
-
-        // إغلاق النافذة
+        selectedText.fillColor = document.getElementById('editTextColor').value;
         closeEditModal();
-    } else {
-        console.log('لا يوجد نص محدد.'); // تحقق من أن النص غير محدد
     }
 }
 
-// تغيير نوع الخط في الحقول عند تغيير القائمة المنسدلة
 function changeInputFonts() {
     const fontFamily = document.getElementById('fontFamily').value;
     const inputs = document.querySelectorAll('#form-content input, #form-content select');
-    inputs.forEach(input => {
-        input.style.fontFamily = fontFamily;
-    });
+    inputs.forEach(input => input.style.fontFamily = fontFamily);
 }
 
-// إحداثيات محددة لكل حقل
 const fieldPositions = {
-    immatriculation: { x: 223, y: 107 },   // إحداثيات حقل immatriculation
-    fullNameAr: { x: 55, y: 153 },       // إحداثيات حقل fullNameAr
-    fullNameFr: { x: 153, y: 193 },       // إحداثيات حقل fullNameFr
-    birthDate: { x: 162, y: 230 },        // إحداثيات حقل birthDate
-    cin: { x: 130, y: 270 },              // إحداثيات حقل cin
-    idcs: { x: 103, y: 306 },             // إحداثيات حقل idcs
+    immatriculation: { x: 223, y: 107 },
+    fullNameAr: { x: 55, y: 153 },
+    fullNameFr: { x: 153, y: 193 },
+    birthDate: { x: 162, y: 230 },
+    cin: { x: 130, y: 270 },
+    idcs: { x: 103, y: 306 },
 };
 
-// إضافة نص إلى اللوحة
 function addText() {
     const immatriculation = document.getElementById('immatriculation').value;
     const fullNameAr = document.getElementById('fullNameAr').value;
@@ -165,34 +126,13 @@ function addText() {
     const idcs = document.getElementById('idcs').value;
     const fontFamily = document.getElementById('fontFamily').value;
 
-    // تحويل النصوص إلى أحرف كبيرة
-    const immatriculationUpper = immatriculation.toUpperCase();
-    const fullNameArUpper = fullNameAr.toUpperCase();
-    const fullNameFrUpper = fullNameFr.toUpperCase();
-    const birthDateUpper = birthDate.toUpperCase();
-    const cinUpper = cin.toUpperCase();
-    const idcsUpper = idcs.toUpperCase();
+    if (immatriculation) addFieldToCanvas(immatriculation.toUpperCase(), fieldPositions.immatriculation, fontFamily, 'black');
+    if (fullNameAr) addFieldToCanvas(fullNameAr.toUpperCase(), fieldPositions.fullNameAr, fontFamily, 'black');
+    if (fullNameFr) addFieldToCanvas(fullNameFr.toUpperCase(), fieldPositions.fullNameFr, fontFamily, 'black');
+    if (birthDate) addFieldToCanvas(birthDate.toUpperCase(), fieldPositions.birthDate, fontFamily, 'black');
+    if (cin) addFieldToCanvas(cin.toUpperCase(), fieldPositions.cin, fontFamily, 'black');
+    if (idcs) addFieldToCanvas(idcs.toUpperCase(), fieldPositions.idcs, fontFamily, 'black');
 
-    // إضافة النصوص إلى الـ Canvas فقط إذا كانت غير فارغة
-    if (immatriculation) {
-        addFieldToCanvas(immatriculationUpper, fieldPositions.immatriculation, fontFamily, 'black');
-    }
-    if (fullNameAr) {
-        addFieldToCanvas(fullNameArUpper, fieldPositions.fullNameAr, fontFamily, 'black');
-    }
-    if (fullNameFr) {
-        addFieldToCanvas(fullNameFrUpper, fieldPositions.fullNameFr, fontFamily, 'black');
-    }
-    if (birthDate) {
-        addFieldToCanvas(birthDateUpper, fieldPositions.birthDate, fontFamily, 'black');
-    }
-    if (cin) {
-        addFieldToCanvas(cinUpper, fieldPositions.cin, fontFamily, 'black');
-    }
-    if (idcs) {
-        addFieldToCanvas(idcsUpper, fieldPositions.idcs, fontFamily, 'black');
-    }
-	// إفراغ الحقول بعد إضافة النصوص
     document.getElementById('immatriculation').value = '';
     document.getElementById('fullNameAr').value = '';
     document.getElementById('fullNameFr').value = '';
@@ -201,90 +141,72 @@ function addText() {
     document.getElementById('idcs').value = '';
 }
 
-// دالة مساعدة لإضافة حقل إلى الـ Canvas
 function addFieldToCanvas(text, position, fontFamily, color) {
     const textItem = new paper.PointText({
         content: text,
         fillColor: color,
         fontFamily: fontFamily,
         fontSize: 20,
-        point: [position.x, position.y], // استخدام الإحداثيات المحددة
+        point: [position.x, position.y],
     });
 
-    // تمكين السحب والإفلات
     textItem.onMouseDrag = (event) => {
         textItem.position = textItem.position.add(event.delta);
     };
 
-    // تحديد النص عند دخول الماوس إليه
-    textItem.onMouseEnter = () => {
-        if (selectedText) {
-            selectedText.strokeColor = null; // إزالة حدود التحديد السابق
-        }
+    // تحديد النص عند النقر بالماوس
+    textItem.onMouseDown = () => {
+        if (selectedText) selectedText.strokeColor = null; // إزالة تحديد النص السابق
         selectedText = textItem;
-        textItem.strokeColor = 'blue'; // إضافة حدود زرقاء للنص المحدد
-        textItem.strokeWidth = 2; // تحديد عرض الحدود
+        textItem.strokeColor = 'red'; // تغيير لون النص المحدد إلى الأحمر
+        textItem.strokeWidth = 2;
     };
 
     // تعديل النص عند النقر المزدوج
     textItem.onDoubleClick = () => {
-        openEditModal(textItem); // فتح نافذة التعديل
-        selectedText = textItem; // تعيين النص المحدد
+        openEditModal(textItem);
+        selectedText = textItem;
     };
 
     texts.push(textItem);
 }
 
-// استماع للنقر خارج النص
+// إلغاء تحديد النص عند النقر خارج النص
 paper.view.onMouseDown = (event) => {
     const clickedOnText = texts.some(text => text.hitTest(event.point));
     if (!clickedOnText && selectedText) {
-        selectedText.strokeColor = null; // إزالة حدود التحديد
-        selectedText = null; // إعادة تعيين selectedText
+        selectedText.strokeColor = null; // إزالة تحديد النص
+        selectedText = null;
     }
 };
 
-// تكبير النص المحدد
 function zoomInText() {
-    if (selectedText) {
-        selectedText.fontSize += 1; // زيادة حجم الخط بمقدار 1
-    }
+    if (selectedText) selectedText.fontSize += 1;
 }
 
-// تصغير النص المحدد
 function zoomOutText() {
-    if (selectedText && selectedText.fontSize > 1) {
-        selectedText.fontSize -= 1; // تقليل حجم الخط بمقدار 1
-    }
+    if (selectedText && selectedText.fontSize > 1) selectedText.fontSize -= 1;
 }
 
-// استماع لأحداث عجلة الماوس (Mouse Wheel)
 document.addEventListener('wheel', (event) => {
     if (selectedText) {
-        event.preventDefault(); // منع السلوك الافتراضي (التكبير/التصغير في الصفحة)
-        if (event.deltaY < 0) {
-            // التكبير عند تحريك العجلة للأعلى
-            zoomInText();
-        } else {
-            // التصغير عند تحريك العجلة للأسفل
-            zoomOutText();
-        }
+        event.preventDefault();
+        if (event.deltaY < 0) zoomInText();
+        else zoomOutText();
     }
-}, { passive: false }); // إضافة { passive: false } لمنع التحذير
+}, { passive: false });
 
-// استماع لضغطات المفاتيح لحذف النص المحدد
 document.addEventListener('keydown', (event) => {
     if (event.key === 'Delete' && selectedText) {
         const index = texts.indexOf(selectedText);
         if (index !== -1) {
-            selectedText.remove(); // إزالة النص من الكانفاس
-            texts.splice(index, 1); // إزالة النص من القائمة
-            selectedText = null; // إعادة تعيين النص المحدد
+            selectedText.remove();
+            texts.splice(index, 1);
+            selectedText = null;
         }
     }
 });
 
-// حفظ الصورة
 function saveImage() {
     const canvas = document.getElementById('canvas');
     const dataURL = canvas.toDataURL('image/png');

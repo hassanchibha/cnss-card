@@ -13,8 +13,8 @@ const images = [
     'https://i.postimg.cc/Z579SDcG/M5.png',
     'https://i.postimg.cc/SNG2ZKzN/M6.png',
     'https://i.postimg.cc/CKRRLHrz/M7.png',
-    'https://i.postimg.cc/yd9W06HK/t1.png',
-    'https://i.postimg.cc/rp7Kd07g/t2.png'
+    'https://i.postimg.cc/W1GXKtHh/t1.png',
+    'https://i.postimg.cc/6pJMYCzk/t2.png'
 ];
 
 let currentImageIndex = 0;
